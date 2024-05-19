@@ -40,6 +40,12 @@ public class Player : MonoBehaviour
 
     public Image aimingPoint; // 조준점 이미지
 
+    private GameObject targetEnemy; // 조준된 적
+
+    private Vector3 hitPos; // 총으로 맞춘 Pos
+
+    private Enemy enemy;
+
     void Start()
     {
         playerAudio = GetComponent<AudioSource>();
@@ -48,8 +54,19 @@ public class Player : MonoBehaviour
     // 총 발사
     public void Shooting()
     {
-        gun.GunShot();
-        Debug.Log("shoot!");
+        if(!isDie)
+        {
+            gun.GunShot();
+            Debug.Log("shoot!");
+
+            Handheld.Vibrate(); // 기기 진동
+
+            if(targetEnemy!= null )
+            {
+                Enemy tenemy = targetEnemy.GetComponent<Enemy>();
+                tenemy.Damage(hitPos, gun.gunDamage);
+            }
+        }
     }
 
     // 재장전
@@ -59,7 +76,7 @@ public class Player : MonoBehaviour
         Debug.Log("Reload!");
     }
 
-    private void RayTarget()
+    private void DetectTarget()
     {
         RaycastHit gunHit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out gunHit, Mathf.Infinity))
@@ -67,12 +84,41 @@ public class Player : MonoBehaviour
             if (gunHit.collider.tag.Equals("Enemy"))
             {
                 aimingPoint.color = Color.red;
+                targetEnemy = gunHit.collider.gameObject; // ray에 부딪힌 object
+                hitPos = gunHit.point; // ray에 맞은 위치
             }
         }
         else
         {
             aimingPoint.color = Color.white;
+            targetEnemy = null;
+            hitPos = Vector3.zero;
         }
+    }
+
+    // 데미지 입음
+    public IEnumerator PlayerDamaged(float EenemyDamage)
+    {
+         
+        if (!isDie)
+        {
+            hp -= EenemyDamage;
+
+            if(hp <= 0)
+            {
+                isDie = true;
+            }
+            damagePannel.SetActive(true);
+            
+            yield return new WaitForSeconds(0.1f); // 0.1초 동안 데미지 패널 띄우기
+            damagePannel.SetActive(false);
+        }
+    }
+
+    private void DisplayUI()
+    {
+        hpText.text = "HP : " + hp.ToString();
+        ammoText.text = gun.magAmmo.ToString() +'/' + gun.remainAmmo.ToString();
     }
 
     private void Update()
@@ -86,6 +132,10 @@ public class Player : MonoBehaviour
         }
 
         if (!isDie)
-            RayTarget();
+        {
+            DetectTarget();
+            DisplayUI();
+        }
+            
     }
 }
