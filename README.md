@@ -7,6 +7,8 @@
 
 ## 실행 방법
 1. 첨부된 apk파일 실행 (안드로이드에서만 가능)
+- **첨부파일** : https://drive.google.com/drive/folders/1b7W_ciFfh3fu1o2z-9NO7dYiOcGzToDZ?usp=sharing
+
 2. 소스코드를 유니티에서 직접 빌드하여 실행
 
 ## 주요 구현 기능
@@ -74,6 +76,7 @@
 6. **경고창**
 
 - 탄알 부족 시, 미래관이 공격받을 시 경고창을 띄움
+
 ![스크린샷 2024-05-25 230038](https://github.com/JisubShim/Monster_Outbreak-AR/assets/118372554/6b57c16a-a3f1-4337-80f7-167c616a8c45)
 
 ## 에셋 정보
@@ -104,6 +107,10 @@ https://noonnu.cc/font_page/1358
 <br>
 
 ![스크린샷 2024-05-25 225721](https://github.com/JisubShim/Monster_Outbreak-AR/assets/118372554/47863d01-8876-4917-aa0e-894cbf7950ce)
+
+## 레퍼런스
+- https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@5.1/manual/index.html
+- https://www.inflearn.com/course/ar-fps-%EA%B2%8C%EC%9E%84%EA%B0%9C%EB%B0%9C/dashboard
 
 ## 기타 정보
 
