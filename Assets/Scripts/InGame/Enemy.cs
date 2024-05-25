@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
     private float enemyAttackSpeed; // 공속
     private bool isDie = false; // 죽었는지 안죽었는지
 
-    private GameObject playerObject;
+    private GameObject miraeObject;
     private Animator enemyAnimator;
     private AudioSource enemyAudio;
 
@@ -35,12 +35,41 @@ public class Enemy : MonoBehaviour
     private bool isAttack = false; // 공격 구분
     private float attackSpeed = 2f; // 공속 (공격 간격)
 
+    private EnemySpawner enemySpawner;
+
+    private bool animOne = false;
+
     void Start()
     {
-        enemyAnimator = this.GetComponent<Animator>();
-        enemyAudio = this.GetComponent<AudioSource>();
+        enemyAnimator = GetComponent<Animator>();
+        enemyAudio = GetComponent<AudioSource>();
+        enemySpawner = FindObjectOfType<EnemySpawner>();
 
+        if(enemySpawner.wave == 2)
+            enemyAudio.volume = 0.5f;
+        
         EnemySetting(enemyData);
+    }
+
+    void Update()
+    {
+        if (!isDie) // 안죽었을 때만
+        {
+
+            EnemyMove();
+
+            EnemyStop();
+
+            if (isAttack)
+            {
+                attackSpeed -= Time.deltaTime;
+                if (attackSpeed <= 0)
+                {
+                    isAttack = false;
+                    attackSpeed = 2f;
+                }
+            }
+        }
     }
 
     private void EnemySetting(EnemyData enemyData)
@@ -54,25 +83,25 @@ public class Enemy : MonoBehaviour
     private void EnemyMove()
     {
         
-        if (playerObject == null)
+        if (miraeObject == null)
         {
-            playerObject = GameObject.FindGameObjectWithTag("Player");
+            miraeObject = GameObject.FindGameObjectWithTag("Mirae");
         }
         else
         {
             if (!isHit) // 공격을 안맞았으면
             {
                 enemyAnimator.SetBool("Move", true);
-                distance = Vector3.Distance(this.transform.position, playerObject.transform.position);
+                distance = Vector3.Distance(transform.position, miraeObject.transform.position);
 
                 if(distance >= 4)
                 {
-                    this.transform.Translate(0,0,enemySpeed * Time.deltaTime);
+                    transform.Translate(0,0,enemySpeed * Time.deltaTime);
                 }
             }
             
-            Vector3 targetPosition = playerObject.transform.position - new Vector3(0f, 3f, 0f);
-            this.transform.LookAt(targetPosition);
+            Vector3 targetPosition = miraeObject.transform.position - new Vector3(0f, 3f, 0f);
+            transform.LookAt(targetPosition);
         }
     }
 
@@ -82,12 +111,17 @@ public class Enemy : MonoBehaviour
         if (isHit) // 맞으면
         {
             stopTime -= Time.deltaTime;
-
-            enemyAnimator.SetBool("Hit", true);
+            if (animOne)
+            {
+                enemyAudio.PlayOneShot(enemyData.enemyHitClip);
+                enemyAnimator.SetBool("Hit", true);
+                animOne = true;
+            }
 
             if (stopTime <= 0)
             {
                 stopTime = 0.5f;
+                animOne = false;
                 isHit = false;
                 enemyAnimator.SetBool("Hit", false);
             }
@@ -111,46 +145,27 @@ public class Enemy : MonoBehaviour
         {
             Death();
             isDie = true;
+            enemyAudio.PlayOneShot(enemyData.enemyDieClip);
             enemyAnimator.SetTrigger("Death");
 
-            Destroy(this.gameObject, 2f);
+            Destroy(gameObject, 1f);
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.gameObject.tag == "Player")
+        if(other.gameObject.tag == "Mirae")
         {
-            Player player = other.GetComponent<Player>();
+            Mirae mirae = other.GetComponent<Mirae>();
 
-            if(player != null && !isAttack)
+            if(mirae != null && !isAttack)
             {
                 isAttack = true;
+                enemyAudio.PlayOneShot(enemyData.enemyAttackClip);
                 enemyAnimator.SetTrigger("Attack");
-                StartCoroutine(player.PlayerDamaged(enemyDamage));
+                StartCoroutine(mirae.PlayerDamaged(enemyDamage));
             }
         }
     }
-    void Update()
-    {
-        if (!isDie) // 안죽었을 때만
-        {
-            
-                EnemyMove();
-            
-            
-                EnemyStop();
-
-            if (isAttack)
-            {
-                attackSpeed -= Time.deltaTime;
-                if(attackSpeed <= 0)
-                {
-                    
-                    isAttack = false;
-                    attackSpeed = 2f;
-                }
-            }
-        }
-    }
+    
 }

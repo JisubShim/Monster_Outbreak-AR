@@ -9,8 +9,7 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
     public GunData gunData; // 총 데이터
-    public int remainAmmo; // 남은 전체 총알 수
-    public int magAmmo; // 탄창 안 총알 수
+    
     public float gunDamage; // 총 데미지
 
     private float lastshotTime; // 마지막으로 총을 쏜 시간
@@ -23,6 +22,7 @@ public class Gun : MonoBehaviour
     
     void Start()
     {
+        isReady = true;
         gunAudio = GetComponent<AudioSource>();
         GunSetting(gunData);
     }
@@ -31,8 +31,8 @@ public class Gun : MonoBehaviour
     private void GunSetting(GunData gunData)
     {
         gunDamage = gunData.gunDamage;
-        remainAmmo = gunData.remainAmmo;
-        magAmmo = gunData.maxAmmo;
+        GameManager.instance.remainAmmo = gunData.remainAmmo;
+        GameManager.instance.magAmmo = gunData.maxAmmo;
         reloadTime = gunData.reloadTime;
         shotTime = gunData.shotTime;
     }
@@ -42,11 +42,10 @@ public class Gun : MonoBehaviour
     {
         if (isReady)
         {
-            if(magAmmo > 0 && Time.time > lastshotTime + shotTime)
+            if (GameManager.instance.magAmmo > 0 && Time.time > lastshotTime + shotTime)
             {
                 shotEffect.Play();
-                //shellEffect.Play();
-                magAmmo--;
+                GameManager.instance.magAmmo--;
                 lastshotTime = Time.time;
                 gunAudio.PlayOneShot(gunData.shotClip);
             }
@@ -59,15 +58,15 @@ public class Gun : MonoBehaviour
         if(isReady)
         {
             // 남은 총알이 있고, 탄창 안 총알이 가득 차지않음
-            if(remainAmmo > 0 && magAmmo < gunData.maxAmmo)
+            if(GameManager.instance.remainAmmo > 0 && GameManager.instance.magAmmo < gunData.maxAmmo)
             {
-                StartCoroutine(GunReloadProcess());
+                StartCoroutine(GunReloading());
             }
         }
     }
 
     // 장전 코루틴
-    private IEnumerator GunReloadProcess()
+    private IEnumerator GunReloading()
     {
         // 장전 중 행동 제한
         isReady = false;
@@ -79,14 +78,14 @@ public class Gun : MonoBehaviour
         yield return new WaitForSeconds(reloadTime);
 
         // 장전
-        int ammoFill = gunData.maxAmmo - magAmmo;
+        int ammoFill = gunData.maxAmmo - GameManager.instance.magAmmo;
 
-        if(ammoFill > remainAmmo)
+        if(ammoFill > GameManager.instance.remainAmmo)
         {
-            ammoFill = remainAmmo;
+            ammoFill = GameManager.instance.remainAmmo;
         }
-        magAmmo += ammoFill;
-        remainAmmo -= ammoFill;
+        GameManager.instance.magAmmo += ammoFill;
+        GameManager.instance.remainAmmo -= ammoFill;
 
         isReady = true;
     }

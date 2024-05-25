@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 49222478201637549b3648284895bbc4, type: 3}
-  m_Name: Pigeon
+  m_Name: Dragon
   m_EditorClassIdentifier: 
   enemyHp: 1
-  enemyDamage: 3
-  enemySpeed: 2
-  enemyAttackSpeed: 3
-  enemyDieClip: {fileID: 8300000, guid: b2670459847e71243ba1ef56cc0c64c1, type: 3}
-  enemyAttackClip: {fileID: 8300000, guid: be954aac402255d469b6a241d267181a, type: 3}
-  enemyHitClip: {fileID: 8300000, guid: 6caf1d491fac9924a8aa9f3269cca80a, type: 3}
+  enemyDamage: 15
+  enemySpeed: 1.5
+  enemyAttackSpeed: 2
+  enemyDieClip: {fileID: 8300000, guid: 301a462b2ced13f44afb61acd6364a0d, type: 3}
+  enemyAttackClip: {fileID: 8300000, guid: 8e4851963e3ebde4b948020b48d7cd78, type: 3}
+  enemyHitClip: {fileID: 8300000, guid: e27f50f725600624f88427a841fd9596, type: 3}

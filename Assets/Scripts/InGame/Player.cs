@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // 체력
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 // 몬스터 조준 확인
 public class Player : MonoBehaviour
 {
-    private bool isDie = false; // 플레이어 죽음 유무
+    
 
     private AudioSource playerAudio;
 
@@ -27,16 +28,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Text hpText; // 체력 텍스트
     
-    [SerializeField]
-    private GameObject damagePannel; // 데미지 패널
     
-    [SerializeField]
-    private AudioClip damageClip; // 데미지 입었을 때 사운드
-    
-    [SerializeField]
-    private AudioClip dieClip; // 죽었을 때 사운드
-
-    public float hp; // 체력
 
     public Image aimingPoint; // 조준점 이미지
 
@@ -46,26 +38,65 @@ public class Player : MonoBehaviour
 
     private Enemy enemy;
 
+    [SerializeField]
+    private GameObject AmmoLackPannel;
+
     void Start()
     {
         playerAudio = GetComponent<AudioSource>();
     }
 
+    private void Update()
+    {
+
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 100, Color.green);
+
+        if (gun == null)
+        {
+            gun = GameObject.FindObjectOfType<Gun>();
+        }
+
+        if (!GameManager.instance.isDestroy)
+        {
+            DetectTarget();
+            DisplayUI();
+        }
+        else
+        {
+
+        }
+    }
+
     // 총 발사
     public void Shooting()
     {
-        if(!isDie)
+        if(!GameManager.instance.isDestroy)
         {
             gun.GunShot();
             Debug.Log("shoot!");
 
             Handheld.Vibrate(); // 기기 진동
 
-            if(targetEnemy!= null )
+            if(targetEnemy!= null && GameManager.instance.magAmmo > 0)
             {
                 Enemy tenemy = targetEnemy.GetComponent<Enemy>();
                 tenemy.Damage(hitPos, gun.gunDamage);
             }
+            else if(GameManager.instance.magAmmo <= 0)
+            {
+                StartCoroutine(AmmoLack());
+            }
+        }
+    }
+
+    public IEnumerator AmmoLack()
+    {
+
+        if (!GameManager.instance.isDestroy)
+        {
+            AmmoLackPannel.SetActive(true);
+            yield return new WaitForSeconds(0.5f);
+            AmmoLackPannel.SetActive(false);
         }
     }
 
@@ -79,6 +110,7 @@ public class Player : MonoBehaviour
     private void DetectTarget()
     {
         RaycastHit gunHit;
+
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out gunHit, Mathf.Infinity))
         {
             if (gunHit.collider.tag.Equals("Enemy"))
@@ -96,46 +128,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    // 데미지 입음
-    public IEnumerator PlayerDamaged(float EenemyDamage)
-    {
-         
-        if (!isDie)
-        {
-            hp -= EenemyDamage;
-
-            if(hp <= 0)
-            {
-                isDie = true;
-            }
-            damagePannel.SetActive(true);
-            
-            yield return new WaitForSeconds(0.1f); // 0.1초 동안 데미지 패널 띄우기
-            damagePannel.SetActive(false);
-        }
-    }
+    
 
     private void DisplayUI()
     {
-        hpText.text = "HP : " + hp.ToString();
-        ammoText.text = gun.magAmmo.ToString() +'/' + gun.remainAmmo.ToString();
+        hpText.text = "HP : " + GameManager.instance.hp.ToString();
+        ammoText.text = GameManager.instance.magAmmo.ToString() +'/' + GameManager.instance.remainAmmo.ToString();
     }
 
-    private void Update()
-    {
-
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * 100, Color.green);
-        
-        if (gun == null)
-        {
-            gun = GameObject.FindObjectOfType<Gun>();
-        }
-
-        if (!isDie)
-        {
-            DetectTarget();
-            DisplayUI();
-        }
-            
-    }
+    
 }
