@@ -104,6 +104,9 @@ https://assetstore.unity.com/packages/2d/gui/gui-pro-fantasy-rpg-170168
 
 - 폰트
 https://noonnu.cc/font_page/1358
+
+- 미래관 이미지
+https://www.seoultech.ac.kr/intro/infobox/picture/?do=commonview&searchtext=&searchtype=1&nowpage=3&bnum=3466&bidx=30244&cate=13&profboardidx=
 <br>
 
 ![스크린샷 2024-05-25 225721](https://github.com/JisubShim/Monster_Outbreak-AR/assets/118372554/47863d01-8876-4917-aa0e-894cbf7950ce)
@@ -116,7 +119,7 @@ https://noonnu.cc/font_page/1358
 
 - 개발 언어 및 엔진 : C#, Unity 2022.3.21f1
 
-- Unity의 AR foundation 플러그인을 활용하여 제작
+- Unity의 AR foundation 플러그인을 활용하여 제작 되었습니다.
 
 - 에셋은 저작권 상의 문제로 인해 gitignore 하였습니다.
 
