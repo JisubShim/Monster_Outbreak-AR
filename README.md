@@ -3,6 +3,10 @@
 ## 프로젝트 설명
 - **컨셉**   
     현실세계에 몬스터 게이트가 열리고, 서울과기대 미래관을 지키는 AR게임
+    
+- **시연 영상**
+- 승리 시 : https://youtu.be/2njd1kmhxyo
+- 패배 시 : https://youtu.be/07Zzgj4Ob7E
 
 
 ## 실행 방법
@@ -38,7 +42,7 @@
 - 3차 웨이브 : 드래곤 30마리
 
 ![스크린샷 2024-05-25 231149](https://github.com/JisubShim/Monster_Outbreak-AR/assets/118372554/65a77b7d-5049-4e07-a0d3-53e026fb9b09)
-
+ 
 <br>
 
 3. **총기**
